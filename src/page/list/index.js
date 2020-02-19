@@ -1,8 +1,9 @@
 import React from "react";
 import { connect } from "dva";
-import { Table } from "antd";
+import { Table, Modal, Button, Form, Input } from "antd";
 
 const namespace = "cards";
+const FormItem = Form.Item;
 
 const mapStateToProps = state => {
   return {
@@ -11,13 +12,12 @@ const mapStateToProps = state => {
   };
 };
 
+@Form.create()
 @connect(mapStateToProps)
 class List extends React.Component {
-  componentDidMount() {
-    this.props.dispatch({
-      type: `${namespace}/queryList`
-    });
-  }
+  state = {
+    visible: false
+  };
 
   columns = [
     {
@@ -37,8 +37,49 @@ class List extends React.Component {
     }
   ];
 
+  componentDidMount() {
+    this.props.dispatch({
+      type: `${namespace}/queryList`
+    });
+  }
+
+  showModal = () => {
+    this.setState({
+      visible: true
+    });
+  };
+
+  handleCancel = () => {
+    this.setState({
+      visible: false
+    });
+  };
+
+  handleOk = () => {
+    console.log(this.props);
+    const {
+      dispatch,
+      form: { validateFields }
+    } = this.props;
+
+    validateFields((err, values) => {
+      if (!err) {
+        dispatch({
+          type: `${namespace}/addOne`,
+          payload: values
+        });
+        this.setState({ visible: false });
+      }
+    });
+  };
+
   render() {
-    const { cardsList, cardsLoading } = this.props;
+    const { visible } = this.state;
+    const {
+      cardsList,
+      cardsLoading,
+      form: { getFieldDecorator }
+    } = this.props;
     return (
       <div>
         <Table
@@ -47,6 +88,29 @@ class List extends React.Component {
           loading={cardsLoading}
           rowKey="id"
         ></Table>
+        <Button onClick={this.showModal}>新建</Button>
+        <Modal
+          title="新建记录"
+          visible={visible}
+          onOk={this.handleOk}
+          onCancel={this.handleCancel}
+        >
+          <Form>
+            <FormItem label="名称">
+              {getFieldDecorator("name", {
+                rules: [{ required: true }]
+              })(<Input />)}
+            </FormItem>
+            <FormItem label="描述">
+              {getFieldDecorator("desc")(<Input />)}
+            </FormItem>
+            <FormItem label="链接">
+              {getFieldDecorator("url", {
+                rules: [{ type: "url" }]
+              })(<Input />)}
+            </FormItem>
+          </Form>
+        </Modal>
       </div>
     );
   }

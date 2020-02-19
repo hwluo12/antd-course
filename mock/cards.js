@@ -26,5 +26,13 @@ export default {
         result: data
       });
     }, 200);
+  },
+  "post /api/addOne": (req, res) => {
+    data.push({ ...req.body, id: data.length + 1 });
+    setTimeout(() => {
+      res.json({
+        success: true
+      });
+    });
   }
 };
