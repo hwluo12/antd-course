@@ -14,7 +14,7 @@ export default {
     },
     *addOne({ payload }, { call, put }) {
       const url = "/api/addOne";
-      yield call(request, url, {
+      const rsp = yield call(request, url, {
         method: "POST",
         body: JSON.stringify(payload),
         headers: {
@@ -22,6 +22,7 @@ export default {
         }
       });
       yield put({ type: "queryList" });
+      return rsp;
     },
     *getStatistic({ payload }, { call, put }) {
       const url = `/api/cards/${payload}/statistic`;
@@ -30,6 +31,7 @@ export default {
         type: "saveStatistic",
         payload: { id: payload, data: rsp.result }
       });
+      return rsp;
     }
   },
   reducers: {

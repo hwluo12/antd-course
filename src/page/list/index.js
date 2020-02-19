@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "dva";
-import { Table, Modal, Button, Form, Input } from "antd";
+import { Table, Modal, Button, Form, Input, message } from "antd";
 import SampleChart from "../../components/SampleChart";
 
 const namespace = "cards";
@@ -96,8 +96,10 @@ class List extends React.Component {
         dispatch({
           type: `${namespace}/addOne`,
           payload: values
+        }).then(() => {
+          message.success("添加条目成功");
+          this.setState({ visible: false });
         });
-        this.setState({ visible: false });
       }
     });
   };

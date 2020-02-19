@@ -16,7 +16,7 @@ export default {
       routes: [
         {
           path: "/",
-          component: "./helloworld"
+          component: "./index"
         },
         {
           path: "/helloworld",
