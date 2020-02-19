@@ -1,4 +1,5 @@
 import request from "../util/request";
+import { message } from "antd";
 
 const delay = millsecond => {
   return new Promise(resolve => {
@@ -14,12 +15,16 @@ export default {
   },
   effects: {
     *queryInitCards(_, { call, put }) {
-      const endPointURI = "/api/random_joke";
-      const puzzle = yield call(request, endPointURI);
-      yield put({ type: "addNewCard", payload: puzzle });
-      yield call(delay, 1000);
-      const puzzle2 = yield call(request, endPointURI);
-      yield put({ type: "addNewCard", payload: puzzle2 });
+      try {
+        const endPointURI = "/api/random_joke";
+        const puzzle = yield call(request, endPointURI);
+        yield put({ type: "addNewCard", payload: puzzle });
+        yield call(delay, 1000);
+        const puzzle2 = yield call(request, endPointURI);
+        yield put({ type: "addNewCard", payload: puzzle2 });
+      } catch (e) {
+        message.error("数据获取失败");
+      }
     }
   },
   reducers: {
