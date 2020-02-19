@@ -3,7 +3,8 @@ import request from "../util/request";
 export default {
   namespace: "cards",
   state: {
-    cardsList: []
+    cardsList: [],
+    statistic: {}
   },
   effects: {
     *queryList(_, { call, put }) {
@@ -21,6 +22,14 @@ export default {
         }
       });
       yield put({ type: "queryList" });
+    },
+    *getStatistic({ payload }, { call, put }) {
+      const url = `/api/cards/${payload}/statistic`;
+      const rsp = yield call(request, url);
+      yield put({
+        type: "saveStatistic",
+        payload: { id: payload, data: rsp.result }
+      });
     }
   },
   reducers: {
@@ -28,6 +37,15 @@ export default {
       return {
         ...state,
         cardsList
+      };
+    },
+    saveStatistic(state, { payload: { id, data } }) {
+      return {
+        ...state,
+        statistic: {
+          ...state.statistic,
+          [id]: data
+        }
       };
     }
   }

@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "dva";
 import { Table, Modal, Button, Form, Input } from "antd";
+import SampleChart from "../../components/SampleChart";
 
 const namespace = "cards";
 const FormItem = Form.Item;
@@ -8,6 +9,7 @@ const FormItem = Form.Item;
 const mapStateToProps = state => {
   return {
     cardsList: state[namespace].cardsList,
+    statistic: state[namespace].statistic,
     cardsLoading: state.loading.effects[`${namespace}/queryList`]
   };
 };
@@ -16,7 +18,9 @@ const mapStateToProps = state => {
 @connect(mapStateToProps)
 class List extends React.Component {
   state = {
-    visible: false
+    visible: false,
+    statisticVisible: false,
+    id: null
   };
 
   columns = [
@@ -34,6 +38,21 @@ class List extends React.Component {
       render(value) {
         return <a href={value}>{value}</a>;
       }
+    },
+    {
+      title: "",
+      dataIndex: "_",
+      render: (_, { id }) => {
+        return (
+          <Button
+            onClick={() => {
+              this.showStatistic(id);
+            }}
+          >
+            图表
+          </Button>
+        );
+      }
     }
   ];
 
@@ -49,6 +68,17 @@ class List extends React.Component {
     });
   };
 
+  showStatistic = id => {
+    this.props.dispatch({
+      type: `${namespace}/getStatistic`,
+      payload: id
+    });
+    this.setState({
+      statisticVisible: true,
+      id
+    });
+  };
+
   handleCancel = () => {
     this.setState({
       visible: false
@@ -56,7 +86,6 @@ class List extends React.Component {
   };
 
   handleOk = () => {
-    console.log(this.props);
     const {
       dispatch,
       form: { validateFields }
@@ -73,10 +102,17 @@ class List extends React.Component {
     });
   };
 
+  handleStatisticCancel = () => {
+    this.setState({
+      statisticVisible: false
+    });
+  };
+
   render() {
-    const { visible } = this.state;
+    const { visible, statisticVisible, id } = this.state;
     const {
       cardsList,
+      statistic,
       cardsLoading,
       form: { getFieldDecorator }
     } = this.props;
@@ -110,6 +146,13 @@ class List extends React.Component {
               })(<Input />)}
             </FormItem>
           </Form>
+        </Modal>
+        <Modal
+          visible={statisticVisible}
+          footer={null}
+          onCancel={this.handleStatisticCancel}
+        >
+          <SampleChart data={statistic[id]} />
         </Modal>
       </div>
     );
