@@ -27,6 +27,10 @@ export default {
           component: "./puzzlecards"
         },
         {
+          path: "/list",
+          component: "./list"
+        },
+        {
           path: "/dashboard",
           routes: [
             { path: "/dashboard/analysis", component: "./Dashboard/Analysis" },
