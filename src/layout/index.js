@@ -1,7 +1,8 @@
 import React, { Component } from "react";
-import { Layout, Menu, Icon } from "antd";
-import logo from "../assets/logo.svg";
+import { Layout } from "antd";
 import SiderMenu from "../components/SiderMenu/SiderMenu";
+import { getMenuData } from "../common/menu";
+import logo from "../assets/logo.svg";
 
 const { Header, Footer, Content } = Layout;
 
@@ -9,7 +10,7 @@ class BasicLayout extends Component {
   render() {
     return (
       <Layout>
-        <SiderMenu logo={logo} />
+        <SiderMenu logo={logo} menuData={getMenuData()} />
         <Layout>
           <Header
             style={{ background: "#fff", textAlign: "center", padding: 0 }}
