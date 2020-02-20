@@ -8,9 +8,10 @@ const { Header, Footer, Content } = Layout;
 
 class BasicLayout extends Component {
   render() {
+    const { location, children } = this.props;
     return (
       <Layout>
-        <SiderMenu logo={logo} menuData={getMenuData()} />
+        <SiderMenu logo={logo} menuData={getMenuData()} location={location} />
         <Layout>
           <Header
             style={{ background: "#fff", textAlign: "center", padding: 0 }}
@@ -19,7 +20,7 @@ class BasicLayout extends Component {
           </Header>
           <Content style={{ margin: "24px 16px 0" }}>
             <div style={{ padding: 24, background: "#fff", minHeight: 360 }}>
-              {this.props.children}
+              {children}
             </div>
           </Content>
           <Footer style={{ textAlign: "center" }}>Footer</Footer>
