@@ -1,62 +1,15 @@
 import React, { Component } from "react";
 import { Layout, Menu, Icon } from "antd";
-import Link from "umi/link";
+import logo from "../assets/logo.svg";
+import SiderMenu from "../components/SiderMenu/SiderMenu";
 
-const { Header, Footer, Sider, Content } = Layout;
-const SubMenu = Menu.SubMenu;
+const { Header, Footer, Content } = Layout;
 
 class BasicLayout extends Component {
   render() {
     return (
       <Layout>
-        <Sider width={256} style={{ minHeight: "100vh", color: "white" }}>
-          <div
-            style={{
-              height: "32px",
-              background: "rgba(255,255,255,.2)",
-              margin: "16px"
-            }}
-          />
-          <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
-            <Menu.Item key="1">
-              <Link to="/helloworld">
-                <Icon type="pie-chart" />
-                <span>Helloworld</span>
-              </Link>
-            </Menu.Item>
-            <Menu.Item key="100">
-              <Link to="/puzzlecards">
-                <Icon type="pie-chart" />
-                <span>Puzzlecards</span>
-              </Link>
-            </Menu.Item>
-            <Menu.Item key="101">
-              <Link to="/list">
-                <Icon type="pie-chart" />
-                <span>List</span>
-              </Link>
-            </Menu.Item>
-            <SubMenu
-              key="sub1"
-              title={
-                <span>
-                  <Icon type="dashboard" />
-                  <span>Dashboard</span>
-                </span>
-              }
-            >
-              <Menu.Item key="2">
-                <Link to="/dashboard/analysis">分析页</Link>
-              </Menu.Item>
-              <Menu.Item key="3">
-                <Link to="/dashboard/monitor">监控页</Link>
-              </Menu.Item>
-              <Menu.Item key="4">
-                <Link to="/dashboard/workplace">工作台</Link>
-              </Menu.Item>
-            </SubMenu>
-          </Menu>
-        </Sider>
+        <SiderMenu logo={logo} />
         <Layout>
           <Header
             style={{ background: "#fff", textAlign: "center", padding: 0 }}
