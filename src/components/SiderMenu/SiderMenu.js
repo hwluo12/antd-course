@@ -1,6 +1,8 @@
 import React from "react";
 import { Layout, Menu, Icon } from "antd";
+import pathToRegexp from "path-to-regexp";
 import Link from "umi/link";
+import { urlToList } from "../_utils/pathTools";
 
 const { Sider } = Layout;
 const { SubMenu } = Menu;
@@ -25,12 +27,59 @@ const getIcon = icon => {
   return icon;
 };
 
+export const getMeunMatcheys = (flatMenuKeys, path) => {
+  return flatMenuKeys.filter(item => {
+    return pathToRegexp(item).test(path);
+  });
+};
+
 export default class SiderMenu extends React.PureComponent {
   constructor(props) {
     super(props);
     this.menus = props.menuData;
+    this.flatMenuKeys = this.getFlatMenuKeys(props.menuData);
+    this.state = {
+      openKeys: this.getDefaultCollapsedSubMenus(props)
+    };
   }
 
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    if (nextProps.location.pathname !== this.props.location.pathname) {
+      this.setState({
+        openKeys: this.getDefaultCollapsedSubMenus(nextProps)
+      });
+    }
+  }
+  /**
+   * Convert pathname to openKeys
+   * /list/search/articles = > ['list','/list/search']
+   * @param  props
+   */
+  getDefaultCollapsedSubMenus(props) {
+    const {
+      location: { pathname }
+    } = props || this.props;
+    return urlToList(pathname)
+      .map(item => {
+        return getMeunMatcheys(this.flatMenuKeys, item)[0];
+      })
+      .filter(item => item);
+  }
+  /**
+   * Recursively flatten the data
+   * [{path:string},{path:string}] => {path,path2}
+   * @param  menus
+   */
+  getFlatMenuKeys(menus) {
+    let keys = [];
+    menus.forEach(item => {
+      if (item.children) {
+        keys = keys.concat(this.getFlatMenuKeys(item.children));
+      }
+      keys.push(item.path);
+    });
+    return keys;
+  }
   /**
    * 判断是否是http链接.返回 Link 或 a
    * Judge whether it is http link.return a or Link
@@ -118,7 +167,15 @@ export default class SiderMenu extends React.PureComponent {
       })
       .filter(item => item);
   };
-
+  // Get the currently selected menu
+  getSelectedMenuKeys = () => {
+    const {
+      location: { pathname }
+    } = this.props;
+    return urlToList(pathname).map(itemPath =>
+      getMeunMatcheys(this.flatMenuKeys, itemPath).pop()
+    );
+  };
   // conversion Path
   // 转化路径
   conversionPath = path => {
@@ -136,8 +193,28 @@ export default class SiderMenu extends React.PureComponent {
     }
     return ItemDom;
   };
+  isMainMenu = key => {
+    return this.menus.some(
+      item => key && (item.key === key || item.path === key)
+    );
+  };
+  handleOpenChange = openKeys => {
+    const lastOpenKey = openKeys[openKeys.length - 1];
+    const moreThanOne =
+      openKeys.filter(openKey => this.isMainMenu(openKey)).length > 1;
+    this.setState({
+      openKeys: moreThanOne ? [lastOpenKey] : [...openKeys]
+    });
+  };
 
   render() {
+    const { openKeys } = this.state;
+    const menuProps = { openKeys };
+    // if pathname can't match, use the nearest parent's key
+    let selectedKeys = this.getSelectedMenuKeys();
+    if (!selectedKeys.length) {
+      selectedKeys = [openKeys[openKeys.length - 1]];
+    }
     return (
       <Sider
         trigger={null}
@@ -151,17 +228,22 @@ export default class SiderMenu extends React.PureComponent {
         <div
           style={{
             height: "32px",
+            lineHeight: "32px",
             background: "rgba(255,255,255,.2)",
             margin: "16px"
           }}
-        />
+        >
+          <Link to="/">
+            <h1 style={{ color: "#fff", textAlign: "center" }}>Ant Design</h1>
+          </Link>
+        </div>
         <Menu
           key="Menu"
           theme="dark"
           mode="inline"
-          // {...menuProps}
-          // onOpenChange={this.handleOpenChange} //SubMenu 展开/关闭的回调
-          // selectedKeys={selectedKeys}
+          {...menuProps}
+          onOpenChange={this.handleOpenChange} //SubMenu 展开/关闭的回调
+          selectedKeys={selectedKeys}
           style={{ padding: "16px 0", width: "100%" }}
         >
           {this.getNavMenuItems(this.menus)}
