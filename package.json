@@ -17,6 +17,10 @@
   },
   "dependencies": {
     "@antv/g2": "^3.5.12",
+    "classnames": "^2.2.6",
+    "lodash": "^4.17.10",
+    "lodash-decorators": "^5.0.0",
+    "moment": "^2.24.0",
     "path-to-regexp": "^1.7.0"
   }
 }
