@@ -31,6 +31,7 @@ class BasicLayout extends Component {
           collapsed={collapsed}
           menuData={getMenuData()}
           location={location}
+          onCollapse={this.handleMenuCollapse}
         />
         <Layout>
           <Header

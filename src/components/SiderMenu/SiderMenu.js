@@ -208,8 +208,14 @@ export default class SiderMenu extends React.PureComponent {
   };
 
   render() {
+    const { logo, collapsed, onCollapse } = this.props;
     const { openKeys } = this.state;
-    const menuProps = { openKeys };
+    // Don't show popup menu when it is been collapsed
+    const menuProps = collapsed
+      ? {}
+      : {
+          openKeys
+        };
     // if pathname can't match, use the nearest parent's key
     let selectedKeys = this.getSelectedMenuKeys();
     if (!selectedKeys.length) {
@@ -219,7 +225,7 @@ export default class SiderMenu extends React.PureComponent {
       <Sider
         trigger={null}
         collapsible
-        collapsed={false}
+        collapsed={collapsed}
         breakpoint="lg"
         onCollapse={() => {}}
         width={256}
