@@ -13,6 +13,7 @@ import {
 import moment from "moment";
 import groupBy from "lodash/groupBy";
 import Debounce from "lodash-decorators/debounce";
+import HeaderSearch from "../HeaderSearch";
 import NoticeIcon from "../NoticeIcon";
 import styles from "./index.less";
 
@@ -80,9 +81,16 @@ class GlobalHeader extends React.Component {
     return (
       <div className={styles.header}>
         <div className={styles.right}>
-          <Input
+          <HeaderSearch
             className={`${styles.search} ${styles.action}`}
-            style={{ width: 200, height: 32 }}
+            placeholder="站内搜索"
+            dataSource={["搜索提示一", "搜索提示二", "搜索提示三"]}
+            onSearch={value => {
+              console.log("input", value); // eslint-disable-line
+            }}
+            onPressEnter={value => {
+              console.log("enter", value); // eslint-disable-line
+            }}
           />
           <Tooltip title="使用文档">
             <a
