@@ -8,11 +8,13 @@ import {
   Dropdown,
   Avatar,
   Button,
-  Tag
+  Tag,
+  Divider
 } from "antd";
 import moment from "moment";
 import groupBy from "lodash/groupBy";
 import Debounce from "lodash-decorators/debounce";
+import Link from "umi/link";
 import HeaderSearch from "../HeaderSearch";
 import NoticeIcon from "../NoticeIcon";
 import styles from "./index.less";
@@ -49,15 +51,31 @@ class GlobalHeader extends React.Component {
     });
     return groupBy(newNotices, "type");
   }
+  toggle = () => {
+    const { collapsed, onCollapse } = this.props;
+    onCollapse(!collapsed);
+    this.triggerResizeEvent();
+  };
+  /* eslint-disable*/
+  @Debounce(600)
+  triggerResizeEvent() {
+    const event = document.createEvent("HTMLEvents");
+    event.initEvent("resize", true, false);
+    window.dispatchEvent(event);
+  }
   render() {
     const {
       currentUser = {},
-      onNoticeClear,
+      collapsed,
+      fetchingNotices,
+      isMobile,
+      logo,
       onNoticeVisibleChange,
-      fetchingNotices
+      onMenuClick,
+      onNoticeClear
     } = this.props;
     const menu = (
-      <Menu className={styles.menu}>
+      <Menu className={styles.menu} selectedKeys={[]} onClick={onMenuClick}>
         <Menu.Item disabled>
           <Icon type="user" />
           个人中心
@@ -80,6 +98,17 @@ class GlobalHeader extends React.Component {
     const noticeData = this.getNoticeData();
     return (
       <div className={styles.header}>
+        {isMobile && [
+          <Link to="/" className={styles.logo} key="logo">
+            <img src={logo} alt="logo" width="32" />
+          </Link>,
+          <Divider type="vertical" key="line" />
+        ]}
+        <Icon
+          className={styles.trigger}
+          type={collapsed ? "menu-unfold" : "menu-fold"}
+          onClick={this.toggle}
+        />
         <div className={styles.right}>
           <HeaderSearch
             className={`${styles.search} ${styles.action}`}

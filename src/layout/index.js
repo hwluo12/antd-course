@@ -8,16 +8,37 @@ import GlobalHeader from "../components/GlobalHeader";
 const { Header, Footer, Content } = Layout;
 
 class BasicLayout extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      collapsed: false
+    };
+  }
+
+  handleMenuCollapse = () => {
+    this.setState({
+      collapsed: !this.state.collapsed
+    });
+  };
+
   render() {
     const { location, children } = this.props;
+    const { collapsed } = this.state;
     return (
       <Layout>
-        <SiderMenu logo={logo} menuData={getMenuData()} location={location} />
+        <SiderMenu
+          logo={logo}
+          collapsed={collapsed}
+          menuData={getMenuData()}
+          location={location}
+        />
         <Layout>
           <Header
             style={{ background: "#fff", textAlign: "center", padding: 0 }}
           >
             <GlobalHeader
+              logo={logo}
+              collapsed={collapsed}
               currentUser={{
                 name: "Serati Ma",
                 avatar:
@@ -25,6 +46,7 @@ class BasicLayout extends Component {
                 userid: "00000001",
                 notifyCount: 12
               }}
+              onCollapse={this.handleMenuCollapse}
             />
           </Header>
           <Content style={{ margin: "24px 16px 0" }}>
