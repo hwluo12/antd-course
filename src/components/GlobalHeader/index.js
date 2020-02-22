@@ -20,6 +20,9 @@ import NoticeIcon from "../NoticeIcon";
 import styles from "./index.less";
 
 class GlobalHeader extends React.Component {
+  componentWillUnmount() {
+    this.triggerResizeEvent.cancel();
+  }
   getNoticeData() {
     const { notices = [] } = this.props;
     if (notices.length === 0) {
