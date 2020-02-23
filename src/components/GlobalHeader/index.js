@@ -18,6 +18,12 @@ import Link from "umi/link";
 import HeaderSearch from "../HeaderSearch";
 import NoticeIcon from "../NoticeIcon";
 import styles from "./index.less";
+import {
+  FormattedMessage,
+  formatMessage,
+  getLocale,
+  setLocale
+} from "umi-plugin-react/locale";
 
 class GlobalHeader extends React.Component {
   componentWillUnmount() {
@@ -66,6 +72,14 @@ class GlobalHeader extends React.Component {
     event.initEvent("resize", true, false);
     window.dispatchEvent(event);
   }
+  changeLang = () => {
+    const locale = getLocale();
+    if (!locale || locale === "zh-CN") {
+      setLocale("en-US");
+    } else {
+      setLocale("zh-CN");
+    }
+  };
   render() {
     const {
       currentUser = {},
@@ -178,7 +192,14 @@ class GlobalHeader extends React.Component {
           ) : (
             <Spin size="small" style={{ marginLeft: 8 }} />
           )}
-          <Button size="small">中文</Button>
+          <Button
+            size="small"
+            onClick={() => {
+              this.changeLang();
+            }}
+          >
+            <FormattedMessage id="lang" />
+          </Button>
         </div>
       </div>
     );
